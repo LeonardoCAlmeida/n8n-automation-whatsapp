@@ -1,0 +1,91 @@
+# Arquivos de ambiente e configuração sensível
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+
+# Dados do WhatsApp Web
+wa_data/
+session/
+qr_codes/
+
+# Dados do n8n
+data/
+n8n/credentials/
+*.sqlite
+*.db
+*.journal
+
+# Logs
+*.log
+logs/
+n8nEventLog*.log
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos temporários
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Arquivos do sistema operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDEs e editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Certificados e chaves
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+
+# Backup files
+*.bak
+*.backup
+
+# Docker
+.docker/
+
+# Ngrok
+ngrok
+ngrok.exe
+
+# Arquivos de configuração SSH
+ssh/
+.ssh/
+
+# Dados binários do n8n
+binaryData/
+
+# Git interno
+git/
+
+# Arquivos comprimidos
+*.zip
+*.rar
+*.tar.gz
+*.7z
+
+# Arquivos de cache
+.cache/
+cache/

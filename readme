@@ -1,0 +1,50 @@
+# WhatsApp Lead Automation
+
+Automação de atendimento para pequenos negócios no WhatsApp com qualificação de leads, integração com Google Sheets, GPT-4 e notificações via Slack/Email.
+
+## Estrutura
+
+- n8n (orquestração de fluxos e integrações)
+- WhatsApp API (open-wa/wa-automate)
+- Google Sheets (armazenamento de leads)
+- GPT-4 (classificação de leads)
+- Slack/Email (notificação do time comercial)
+- ngrok (exposição de webhooks em ambiente de desenvolvimento)
+
+## Como usar
+
+1. Copie o `.env.example` para `.env` e ajuste as variáveis.
+2. Suba os serviços:
+   ```sh
+   docker-compose up -d
+   ```
+3. Acesse o n8n em [http://localhost:5678](http://localhost:5678) (usuário e senha conforme `.env`).
+
+4. Importe o fluxo `n8n/workflows/atendimento-whatsapp.json` no painel do n8n.
+
+5. Configure as credenciais do Google Sheets, OpenAI (GPT-4), WhatsApp API e Slack/Email pelo painel do n8n.
+
+6. Siga o fluxograma disponível em `docs/fluxograma.png` para entender o fluxo do atendimento.
+
+## Fluxo principal
+
+1. Cliente envia mensagem no WhatsApp.
+2. Bot responde com perguntas estratégicas.
+3. Respostas são analisadas pelo GPT-4.
+4. Lead é classificado (quente, morno, frio).
+5. Dados são salvos no Google Sheets.
+6. Se lead "quente", notificação no Slack/Email.
+
+---
+
+## Personalização
+
+- Ajuste as perguntas no node correspondente do fluxo n8n.
+- Configure variáveis sensíveis apenas em `.env` (não suba para o GitHub).
+- Consulte a documentação dos nodes no [site oficial do n8n](https://n8n.io/integrations/).
+
+---
+
+## Fluxograma
+
+Veja o fluxo visual do atendimento em `docs/fluxograma.png`.

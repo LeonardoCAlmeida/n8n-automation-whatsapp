@@ -1,0 +1,150 @@
+{
+    "name": "Atendimento WhatsApp Lead Automation",
+    "nodes": [
+      {
+        "parameters": {
+          "path": "webhook-whatsapp",
+          "responseMode": "onReceived"
+        },
+        "name": "Webhook WhatsApp",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 1,
+        "position": [200, 300]
+      },
+      {
+        "parameters": {
+          "url": "http://whatsapp:8002/send-message",
+          "options": {},
+          "bodyParametersUi": {
+            "parameter": [
+              {
+                "name": "to",
+                "value": "={{$json[\"from\"]}}"
+              },
+              {
+                "name": "message",
+                "value": "Olá! Para melhor atendê-lo, responda:\n1. Qual seu nome e empresa?\n2. Qual seu principal desafio?\n3. Qual seu orçamento ou urgência?"
+              }
+            ]
+          }
+        },
+        "name": "Enviar Perguntas WhatsApp",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 1,
+        "position": [400, 300]
+      },
+      {
+        "parameters": {
+          "prompt": "Classifique o lead a partir da seguinte resposta: {{$json[\"body\"]}}. Responda apenas 'quente', 'morno' ou 'frio'.",
+          "model": "gpt-4"
+        },
+        "name": "Classificar Lead GPT-4",
+        "type": "n8n-nodes-base.openAi",
+        "typeVersion": 1,
+        "position": [600, 300]
+      },
+      {
+        "parameters": {
+          "sheetId": "ID_DA_SUA_PLANILHA",
+          "range": "Leads!A:D",
+          "valueInputOption": "RAW",
+          "options": {},
+          "values": [
+            [
+              "={{$json[\"from\"]}}",
+              "={{$json[\"body\"]}}",
+              "={{$json[\"timestamp\"]}}",
+              "={{$node[\"Classificar Lead GPT-4\"].json[\"text\"]}}"
+            ]
+          ]
+        },
+        "name": "Salvar no Google Sheets",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 2,
+        "position": [800, 300]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "string": [
+              {
+                "value1": "={{$node[\"Classificar Lead GPT-4\"].json[\"text\"]}}",
+                "operation": "equal",
+                "value2": "quente"
+              }
+            ]
+          }
+        },
+        "name": "Verificar Lead Quente",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [1000, 300]
+      },
+      {
+        "parameters": {
+          "webhookUrl": "SEU_WEBHOOK_SLACK"
+        },
+        "name": "Notificar Slack Lead Quente",
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 1,
+        "position": [1200, 200]
+      }
+    ],
+    "connections": {
+      "Webhook WhatsApp": {
+        "main": [
+          [
+            {
+              "node": "Enviar Perguntas WhatsApp",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar Perguntas WhatsApp": {
+        "main": [
+          [
+            {
+              "node": "Classificar Lead GPT-4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Classificar Lead GPT-4": {
+        "main": [
+          [
+            {
+              "node": "Salvar no Google Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Salvar no Google Sheets": {
+        "main": [
+          [
+            {
+              "node": "Verificar Lead Quente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verificar Lead Quente": {
+        "main": [
+          [
+            {
+              "node": "Notificar Slack Lead Quente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    }
+  }
